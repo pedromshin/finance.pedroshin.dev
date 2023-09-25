@@ -28,7 +28,7 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
 
-      # Authenticate with AWS (replace with your credentials)
+      # Authenticate with AWS
       - run:
           name: AWS Authentication
           command: |
@@ -36,12 +36,12 @@ jobs:
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             aws configure set default.region $AWS_REGION
 
-      # Deploy to AWS (replace with your deployment script)
+      # Deploy to AWS
       - run:
-          name: Deploy to AWS
+          name: Deploy to AWS Elastic Beanstalk
           command: |
-            # Replace this with your deployment script or commands
-            # Example: python deploy.py
+            eb init -p python-3.8 flask-app --region $AWS_REGION
+            eb deploy
 
 workflows:
   build_and_deploy:

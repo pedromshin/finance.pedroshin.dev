@@ -1,0 +1,6 @@
+version: "3.8"
+services:
+  beanstalk-flask:
+    image: "pedromshin/beanstalk-flask"
+    ports:
+      - "80:5000"

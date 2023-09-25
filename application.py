@@ -1,16 +1,16 @@
-
 from threading import Lock
 from flask import Flask, render_template, session
 from flask_socketio import SocketIO, emit
 import requests
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
-# different async modes, or leave it set to None for the applicationlication to choose
+# different async modes, or leave it set to None for the application to choose
 # the best option based on installed packages.
 async_mode = None
 
 application = Flask(__name__)
-socketio = SocketIO(application, async_mode=async_mode)
+socketio = SocketIO(application, async_mode=async_mode,
+                    cors_allowed_origins="*")
 thread = None
 thread_lock = Lock()
 
@@ -24,8 +24,8 @@ def background_thread():
         socketio.sleep(3)
         count += 1
         price = ((requests.get(url)).json())['data']['amount']
-        socketio.emit('my_response',
-                      {'data': 'Bitcoin current price (USD): ' + price, 'count': count})
+        socketio.emit('price_update',
+                      {'data': 'Bitcoin current price (USD): ' + price, 'count': count}, namespace='/')
 
 
 @application.route('/')
@@ -39,24 +39,13 @@ def my_event(message):
     emit('my_response',
          {'data': message['data'], 'count': session['receive_count']})
 
-# Receive the test request from client and send back a test response
+
+@socketio.on('message_from_frontend')
+def handle_message_from_frontend(message):
+    emit('response_to_frontend', {'data': 'Server received: ' + message})
 
 
-@socketio.on('test_message')
-def handle_message(data):
-    print('received message: ' + str(data))
-    emit('test_response', {'data': 'Test response sent'})
-
-# Broadcast a message to all clients
-
-
-@socketio.on('broadcast_message')
-def handle_broadcast(data):
-    print('received: ' + str(data))
-    emit('broadcast_response', {'data': 'Broadcast sent'}, broadcast=True)
-
-
-@socketio.event
+@socketio.on('connect')
 def connect():
     global thread
     with thread_lock:
@@ -65,5 +54,5 @@ def connect():
     emit('my_response', {'data': 'Connected', 'count': 0})
 
 
-if __name__ == "__main__":
-    socketio.run(application)
+if __name__ == '__main__':
+    socketio.run(application, host='0.0.0.0', port=5000, debug=True)

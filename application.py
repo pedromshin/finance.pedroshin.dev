@@ -27,7 +27,7 @@ def background_thread():
         count += 1
         price = ((requests.get(url)).json())['data']['amount']
         socketio.emit(response_event,
-                      {'data': 'Bitcoin current price (USD): ' + price, 'count': count})
+                      {'price': price, 'count': count, 'currency': 'USD'})
 
 
 @socketio.event

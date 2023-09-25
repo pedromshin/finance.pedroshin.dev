@@ -65,5 +65,4 @@ def connect():
     emit('my_response', {'data': 'Connected', 'count': 0})
 
 
-if __name__ == '__main__':
-    socketio.run(application)
+socketio.run(application)

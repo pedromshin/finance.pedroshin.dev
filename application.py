@@ -10,8 +10,7 @@ import requests
 async_mode = None
 
 application = Flask(__name__)
-socketio = SocketIO(application, async_mode=async_mode,
-                    allow_unsafe_werkzeug=True)
+socketio = SocketIO(application, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
 
@@ -66,4 +65,4 @@ def connect():
     emit('my_response', {'data': 'Connected', 'count': 0})
 
 
-socketio.run(application)
+socketio.run(application, allow_unsafe_werkzeug=True)

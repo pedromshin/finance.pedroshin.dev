@@ -28,6 +28,12 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
 
+      # Install EB CLI
+      - run:
+          name: Install EB CLI
+          command: |
+            pip install awsebcli
+
       # Authenticate with AWS
       - run:
           name: AWS Authentication

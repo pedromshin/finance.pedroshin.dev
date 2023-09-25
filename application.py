@@ -19,7 +19,6 @@ response_event = "response_to_frontend"
 
 
 def background_thread():
-    print("QWEQWE")
     """Example of how to send server generated events to clients."""
     count = 0
     while True:

@@ -16,7 +16,7 @@ jobs:
   deploy:
     docker:
       - image: cimg/python:3.8
-    working_directory: ~/my-flask-app
+    working_directory: ~/app
     steps:
       - checkout
 
@@ -42,3 +42,11 @@ jobs:
           command: |
             # Replace this with your deployment script or commands
             # Example: python deploy.py
+
+workflows:
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build

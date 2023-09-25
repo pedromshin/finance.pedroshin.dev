@@ -32,9 +32,9 @@ jobs:
       - run:
           name: AWS Authentication
           command: |
-            aws configure set aws_access_key_id <YOUR_ACCESS_KEY_ID>
-            aws configure set aws_secret_access_key <YOUR_SECRET_ACCESS_KEY>
-            aws configure set default.region <YOUR_AWS_REGION>
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set default.region $AWS_REGION
 
       # Deploy to AWS (replace with your deployment script)
       - run:

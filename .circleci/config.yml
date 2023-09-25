@@ -46,6 +46,7 @@ jobs:
       - run:
           name: Deploy to AWS Elastic Beanstalk
           command: |
+            eb init -p python-3.8 flask-app --region $AWS_REGION
             eb status flask-env || eb create flask-env
             eb deploy flask-env
 

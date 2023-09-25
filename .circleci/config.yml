@@ -1,0 +1,44 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.8
+    working_directory: ~/app
+    steps:
+      - checkout
+
+      # Install dependencies
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt
+
+  deploy:
+    docker:
+      - image: cimg/python:3.8
+    working_directory: ~/my-flask-app
+    steps:
+      - checkout
+
+      # Install AWS CLI (if not already installed)
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
+      # Authenticate with AWS (replace with your credentials)
+      - run:
+          name: AWS Authentication
+          command: |
+            aws configure set aws_access_key_id <YOUR_ACCESS_KEY_ID>
+            aws configure set aws_secret_access_key <YOUR_SECRET_ACCESS_KEY>
+            aws configure set default.region <YOUR_AWS_REGION>
+
+      # Deploy to AWS (replace with your deployment script)
+      - run:
+          name: Deploy to AWS
+          command: |
+            # Replace this with your deployment script or commands
+            # Example: python deploy.py

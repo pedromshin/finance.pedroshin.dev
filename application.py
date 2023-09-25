@@ -10,7 +10,8 @@ import requests
 async_mode = None
 
 application = Flask(__name__)
-socketio = SocketIO(application, async_mode=async_mode)
+socketio = SocketIO(application, async_mode=async_mode,
+                    allow_unsafe_werkzeug=True)
 thread = None
 thread_lock = Lock()
 

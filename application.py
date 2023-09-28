@@ -3,22 +3,22 @@ from flask import Flask, session
 from flask_socketio import SocketIO, emit
 import requests
 
-import psycopg2
+# import psycopg2
 
-from decouple import config
+# from decouple import config
 
-# Database configuration
-db_config = {
-    "dbname": config('DB_NAME'),
-    "user": config('DB_USER'),
-    "password": config('DB_PASSWORD'),
-    "host": config('DB_HOST'),
-    "port": config('DB_PORT'),
-}
+# # Database configuration
+# db_config = {
+#     "dbname": config('DB_NAME'),
+#     "user": config('DB_USER'),
+#     "password": config('DB_PASSWORD'),
+#     "host": config('DB_HOST'),
+#     "port": config('DB_PORT'),
+# }
 
-conn = psycopg2.connect(**db_config)
+# conn = psycopg2.connect(**db_config)
 
-print("Database connected successfully", conn)
+# print("Database connected successfully", conn)
 
 async_mode = None
 
@@ -40,10 +40,10 @@ def background_thread():
         count += 1
         price = ((requests.get(url)).json())['data']['amount']
 
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
-            conn.commit()
+        # with conn.cursor() as cur:
+        #     cur.execute(
+        #         "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
+        #     conn.commit()
 
         print(price)
         socketio.emit(response_event,
@@ -68,7 +68,7 @@ def connect():
 
 
 if __name__ == '__main__':
-    try:
-        socketio.run(application, host='0.0.0.0', port=5000, debug=True)
-    finally:
-        conn.close()
+    socketio.run(application, host='0.0.0.0', port=5000, debug=True)
+    # try:
+    # finally:
+    #     conn.close()

@@ -1,5 +1,5 @@
 from threading import Lock
-from flask import Flask, render_template, session
+from flask import Flask, session
 from flask_socketio import SocketIO, emit
 import requests
 

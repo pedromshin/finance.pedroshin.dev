@@ -47,7 +47,7 @@ jobs:
           name: Initialize AWS Elastic Beanstalk
           command: |
             eb init -p python-3.8 flask-app --region $AWS_REGION
-            eb status finance-pedroshindev-env || eb create finance-pedroshindev-env
+            eb status finance-pedroshindev-env
 
       # Deploy to AWS Elastic Beanstalk
       - run:

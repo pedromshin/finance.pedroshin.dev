@@ -42,12 +42,17 @@ jobs:
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             aws configure set default.region $AWS_REGION
 
+      # Initialize AWS Elastic Beanstalk
+      - run:
+          name: Initialize AWS Elastic Beanstalk
+          command: |
+            eb init -p python-3.8 flask-app --region $AWS_REGION
+            eb status flask-env || eb create flask-env
+
       # Deploy to AWS Elastic Beanstalk
       - run:
           name: Deploy to AWS Elastic Beanstalk
           command: |
-            eb init -p python-3.8 flask-app --region $AWS_REGION
-            eb status flask-env || eb create flask-env
             eb deploy flask-env
 
 workflows:

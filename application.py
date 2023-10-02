@@ -3,6 +3,8 @@ from flask import Flask, session
 from flask_socketio import SocketIO, emit
 import requests
 
+import threading
+
 import psycopg2
 
 from decouple import config
@@ -31,11 +33,13 @@ thread_lock = Lock()
 url = 'https://api.coinbase.com/v2/prices/btc-usd/spot'
 response_event = "response_to_frontend"
 
+streaming = True
+
 
 def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
-    while True:
+    while streaming:
         socketio.sleep(1)
         count += 1
         price = ((requests.get(url)).json())['data']['amount']
@@ -56,6 +60,20 @@ def my_event(message):
     session[receive_count] = session.get(receive_count, 0) + 1
     emit(response_event,
          {'data': message['data'], 'count': session[receive_count]})
+
+
+@socketio.on('control_streaming')
+def control_streaming(message):
+    streaming_thread = threading.Thread(target=background_thread)
+    print(message)
+    global streaming
+    if message == 'pause':
+        streaming = False
+    elif message == 'stream':
+        streaming = True
+        if not streaming_thread.is_alive():
+            # Start a new thread to resume streaming
+            streaming_thread.start()
 
 
 @socketio.on('connect')

@@ -1,13 +1,16 @@
-from threading import Lock
-from flask import Flask, session
-from flask_socketio import SocketIO, emit
-import requests
-
-import threading
-
-import psycopg2
-
+import gevent.monkey
+gevent.monkey.patch_all()
 from decouple import config
+import psycopg2
+import threading
+from geventwebsocket.handler import WebSocketHandler
+from gevent import pywsgi
+import gevent
+import requests
+from flask_socketio import SocketIO, emit
+from flask import Flask, session
+from threading import Lock
+
 
 # Database configuration
 db_config = {
@@ -86,7 +89,6 @@ def connect():
 
 
 if __name__ == '__main__':
-    socketio.run(application, host='0.0.0.0', port=5000, debug=True)
-    # try:
-    # finally:
-    # conn.close()
+    server = pywsgi.WSGIServer(
+        ('0.0.0.0', 5000), application, handler_class=WebSocketHandler)
+    server.serve_forever()

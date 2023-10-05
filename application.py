@@ -43,7 +43,7 @@ def background_thread():
 
         print(price)
         socketio.emit(response_event,
-                      {'price': price, 'count': count, 'currency': 'USD'})
+                      {'price': price, 'count': count, 'currency': 'USD', 'streaming': "true" if streaming else "false"})
 
 
 receive_count = "receive_count"

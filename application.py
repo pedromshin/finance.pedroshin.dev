@@ -18,7 +18,7 @@ conn = psycopg2.connect(**db_config)
 print("Database connected successfully", conn)
 
 application = Flask(__name__)
-socketio = SocketIO(application, async_mode="eventlet", cors_allowed_origins="*")
+socketio = SocketIO(application, async_mode=None, cors_allowed_origins="*")
 
 url = 'https://api.coinbase.com/v2/prices/btc-usd/spot'
 response_event = "response_to_frontend"

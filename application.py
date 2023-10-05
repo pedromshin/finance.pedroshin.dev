@@ -3,8 +3,6 @@ import psycopg2
 import requests
 from flask_socketio import SocketIO, emit
 from flask import Flask, session
-from threading import Lock
-
 
 # Database configuration
 db_config = {
@@ -21,14 +19,12 @@ print("Database connected successfully", conn)
 
 application = Flask(__name__)
 socketio = SocketIO(application, async_mode=None, cors_allowed_origins="*")
-thread = None
-thread_lock = Lock()
 
 url = 'https://api.coinbase.com/v2/prices/btc-usd/spot'
 response_event = "response_to_frontend"
 
 streaming = True
-
+thread = None
 
 def background_thread():
     """Example of how to send server generated events to clients."""
@@ -70,10 +66,9 @@ def control_streaming(message):
 @socketio.on('connect')
 def connect():
     global thread
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0})
+    if thread is None:
+        thread = socketio.start_background_task(background_thread)
+        emit('my_response', {'data': 'Connected', 'count': 0})
 
 
 if __name__ == '__main__':

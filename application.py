@@ -68,17 +68,12 @@ def my_event(message):
 
 @socketio.on('control_streaming')
 def control_streaming(message):
-    streaming_thread = threading.Thread(target=background_thread)
     print(message)
     global streaming
     if message == 'pause':
         streaming = False
     elif message == 'stream':
         streaming = True
-        if not streaming_thread.is_alive():
-            # Start a new thread to resume streaming
-            streaming_thread.start()
-
 
 @socketio.on('connect')
 def connect():

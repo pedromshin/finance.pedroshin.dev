@@ -24,10 +24,8 @@ conn = psycopg2.connect(**db_config)
 
 print("Database connected successfully", conn)
 
-async_mode = None
-
 application = Flask(__name__)
-socketio = SocketIO(application, async_mode=async_mode,
+socketio = SocketIO(application, async_mode='gevent',
                     cors_allowed_origins="*")
 thread = None
 thread_lock = Lock()

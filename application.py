@@ -1,21 +1,21 @@
-from decouple import config
-import psycopg2
+# from decouple import config
+# import psycopg2
 import requests
 from flask_socketio import SocketIO, emit
 from flask import Flask, session
 
-# Database configuration
-db_config = {
-    "dbname": config('DB_NAME'),
-    "user": config('DB_USER'),
-    "password": config('DB_PASSWORD'),
-    "host": config('DB_HOST'),
-    "port": config('DB_PORT'),
-}
+# # Database configuration
+# db_config = {
+#     "dbname": config('DB_NAME'),
+#     "user": config('DB_USER'),
+#     "password": config('DB_PASSWORD'),
+#     "host": config('DB_HOST'),
+#     "port": config('DB_PORT'),
+# }
 
-conn = psycopg2.connect(**db_config)
+# conn = psycopg2.connect(**db_config)
 
-print("Database connected successfully", conn)
+# print("Database connected successfully", conn)
 
 application = Flask(__name__)
 socketio = SocketIO(application, async_mode=None, cors_allowed_origins="*")
@@ -35,11 +35,11 @@ def background_thread():
         count += 1
         price = ((requests.get(url)).json())['data']['amount'] if streaming else 0
 
-        if streaming: 
-            with conn.cursor() as cur:
-                cur.execute(
-                    "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
-                conn.commit()
+        # if streaming: 
+        #     with conn.cursor() as cur:
+        #         cur.execute(
+        #             "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
+        #         conn.commit()
 
         print(price)
         socketio.emit(response_event,

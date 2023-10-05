@@ -45,11 +45,11 @@ def background_thread():
         count += 1
         price = ((requests.get(url)).json())['data']['amount'] if streaming else 0
 
-        # if streaming: 
-        #     with conn.cursor() as cur:
-        #         cur.execute(
-        #             "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
-        #         conn.commit()
+        if streaming: 
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
+                conn.commit()
 
         print(price)
         socketio.emit(response_event,
@@ -83,6 +83,4 @@ def connect():
 
 
 if __name__ == '__main__':
-    server = pywsgi.WSGIServer(
-        ('0.0.0.0', 5000), application, handler_class=WebSocketHandler)
-    server.serve_forever()
+    socketio.run(application, host='0.0.0.0', port=5000, debug=True)

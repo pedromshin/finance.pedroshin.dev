@@ -18,7 +18,7 @@ conn = psycopg2.connect(**db_config)
 print("Database connected successfully", conn)
 
 application = Flask(__name__)
-socketio = SocketIO(application, cors_allowed_origins="*")
+socketio = SocketIO(application, async_mode="eventlet", cors_allowed_origins="*")
 
 url = 'https://api.coinbase.com/v2/prices/btc-usd/spot'
 response_event = "response_to_frontend"
@@ -27,16 +27,15 @@ streaming = True
 thread = None
 
 def background_thread():
-    """Example of how to send server generated events to clients."""
+    """Example of how to send server-generated events to clients."""
     count = 0
-    if not streaming:
-        print("Streaming paused")
+    if not streaming: print("Streaming paused")
     while True:
         socketio.sleep(1)
         count += 1
         price = ((requests.get(url)).json())['data']['amount'] if streaming else 0
 
-        if streaming:
+        if streaming: 
             with conn.cursor() as cur:
                 cur.execute(
                     "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
@@ -47,9 +46,9 @@ def background_thread():
                       {'price': price, 'count': count, 'currency': 'USD'})
 
 
-@socketio.event
-def my_event(message):
-    receive_count = "receive_count"
+receive_count = "receive_count"
+@socketio.on(receive_count)
+def receive_count(message):
     session[receive_count] = session.get(receive_count, 0) + 1
     emit(response_event,
          {'data': message['data'], 'count': session[receive_count]})

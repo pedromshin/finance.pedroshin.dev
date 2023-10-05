@@ -2,7 +2,6 @@ import gevent.monkey
 gevent.monkey.patch_all()
 from decouple import config
 import psycopg2
-import threading
 from geventwebsocket.handler import WebSocketHandler
 from gevent import pywsgi
 import gevent
@@ -42,15 +41,17 @@ streaming = True
 def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
-    while streaming:
+    if not streaming: print("Streaming paused")
+    while True:
         socketio.sleep(1)
         count += 1
-        price = ((requests.get(url)).json())['data']['amount']
+        price = ((requests.get(url)).json())['data']['amount'] if streaming else 0
 
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
-            conn.commit()
+        if streaming: 
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
+                conn.commit()
 
         print(price)
         socketio.emit(response_event,
@@ -65,18 +66,18 @@ def my_event(message):
          {'data': message['data'], 'count': session[receive_count]})
 
 
-# @socketio.on('control_streaming')
-# def control_streaming(message):
-#     streaming_thread = threading.Thread(target=background_thread)
-#     print(message)
-#     global streaming
-#     if message == 'pause':
-#         streaming = False
-#     elif message == 'stream':
-#         streaming = True
-#         if not streaming_thread.is_alive():
-#             # Start a new thread to resume streaming
-#             streaming_thread.start()
+@socketio.on('control_streaming')
+def control_streaming(message):
+    streaming_thread = threading.Thread(target=background_thread)
+    print(message)
+    global streaming
+    if message == 'pause':
+        streaming = False
+    elif message == 'stream':
+        streaming = True
+        if not streaming_thread.is_alive():
+            # Start a new thread to resume streaming
+            streaming_thread.start()
 
 
 @socketio.on('connect')

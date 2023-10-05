@@ -45,11 +45,11 @@ def background_thread():
         count += 1
         price = ((requests.get(url)).json())['data']['amount'] if streaming else 0
 
-        if streaming: 
-            with conn.cursor() as cur:
-                cur.execute(
-                    "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
-                conn.commit()
+        # if streaming: 
+        #     with conn.cursor() as cur:
+        #         cur.execute(
+        #             "INSERT INTO btc_prices (price, timestamp) VALUES (%s, NOW())", (price,))
+        #         conn.commit()
 
         print(price)
         socketio.emit(response_event,

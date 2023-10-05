@@ -1,10 +1,5 @@
-import gevent.monkey
-gevent.monkey.patch_all()
 from decouple import config
 import psycopg2
-from geventwebsocket.handler import WebSocketHandler
-from gevent import pywsgi
-import gevent
 import requests
 from flask_socketio import SocketIO, emit
 from flask import Flask, session
@@ -25,8 +20,7 @@ conn = psycopg2.connect(**db_config)
 print("Database connected successfully", conn)
 
 application = Flask(__name__)
-socketio = SocketIO(application, async_mode='gevent',
-                    cors_allowed_origins="*")
+socketio = SocketIO(application, async_mode=None, cors_allowed_origins="*")
 thread = None
 thread_lock = Lock()
 

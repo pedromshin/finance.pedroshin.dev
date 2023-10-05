@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Initialize AWS Elastic Beanstalk
           command: |
-            eb init -p python-3.10.9 finance.pedroshin.dev --region $AWS_REGION
+            eb init -p python-3.11 finance.pedroshin.dev --region $AWS_REGION
 
       # Deploy to AWS Elastic Beanstalk
       - run:
